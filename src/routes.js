@@ -1,9 +1,9 @@
-import Home from './Home';
-import Posts from './Posts';
-import Todos from './Todos';
-import NotFound from './NotFound';
+import Home from './pages/Home';
+import Posts from './pages/Posts';
+import Todos from './pages/Todos';
+import NotFound from './pages/NotFound';
 
-const Routes = [
+const routes = [
   {
     path: '/',
     exact: true,
@@ -24,4 +24,4 @@ const Routes = [
   },
 ];
 
-export default Routes;
+export default routes;

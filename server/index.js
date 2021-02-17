@@ -7,7 +7,7 @@ import { matchPath, StaticRouter } from 'react-router-dom';
 import serialize from 'serialize-javascript';
 
 import App from '../src/App';
-import Routes from '../src/routes';
+import routes from '../src/routes';
 
 const PORT = process.env.PORT || 3006;
 const app = express();
@@ -15,7 +15,7 @@ const app = express();
 app.use(express.static('./build'));
 
 app.get('/*', (req, res) => {
-  const currentRoute = Routes.find(route => matchPath(req.url, route)) || {};
+  const currentRoute = routes.find(route => matchPath(req.url, route)) || {};
   let promise;
 
   if (currentRoute.loadData) {

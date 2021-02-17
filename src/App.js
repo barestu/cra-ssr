@@ -1,10 +1,7 @@
 import React from 'react';
-import { Route, Switch, NavLink } from 'react-router-dom';
-import Home from './Home';
-import Todos from './Todos';
-import Posts from './Posts';
-import NotFound from './NotFound';
-import './App.css';
+import { Switch, NavLink } from 'react-router-dom';
+import { renderRoutes } from 'react-router-config';
+import routes from './routes';
 
 function App() {
   return (
@@ -22,10 +19,7 @@ function App() {
       </ul>
 
       <Switch>
-        <Route exact path="/" render={props => <Home name="Bob" {...props} />} />
-        <Route path="/todos" component={Todos} />
-        <Route path="/posts" component={Posts} />
-        <Route component={NotFound} />
+        {renderRoutes(routes)}
       </Switch>
     </div>
   );

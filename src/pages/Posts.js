@@ -5,7 +5,7 @@ const Posts = () => {
 };
 
 Posts.loadData = () => {
-  console.log('post page');
+  return Promise.resolve(null);
 };
 
 export default Posts;

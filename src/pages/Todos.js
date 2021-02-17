@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import loadData from './helpers/loadData';
+import loadData from '../helpers/loadData';
 
 const Todos = ({ staticContext }) => {
   const [data, setData] = useState(staticContext?.data || []);
@@ -13,7 +13,7 @@ const Todos = ({ staticContext }) => {
   return (
     <div>
       <h1>Todos</h1>
-      <ul>{data && data.map(item => <li key={item.id}>{item.title}</li>)}</ul>
+      <ul>{data.map(item => <li key={`todo-${item.id}`}>{item.title}</li>)}</ul>
     </div>
   );
 };
