@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import loadData from '../helpers/loadData';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchTodosQuery } from '../store/actions';
 
-const Todos = ({ staticContext }) => {
-  const [data, setData] = useState(staticContext?.data || []);
+const Todos = () => {
+  const dispatch = useDispatch();
+  const { data } = useSelector(state => state.todos);
 
   useEffect(() => {
-    loadData('todos').then(data => {
-      setData(data);
-    });
+    dispatch(fetchTodosQuery('todos'));
   }, []);
 
   return (
@@ -18,10 +18,8 @@ const Todos = ({ staticContext }) => {
   );
 };
 
-Todos.loadData = () => {
-  return loadData('todos').then(data => {
-    return data;
-  });
+Todos.loadData = store => {
+  return store.dispatch(fetchTodosQuery('todos'));
 };
 
 export default Todos;
