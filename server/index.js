@@ -1,10 +1,12 @@
 import path from 'path';
 import fs from 'fs';
-import React from 'react';
 import express from 'express';
 import serialize from 'serialize-javascript';
+
+import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import { matchPath, StaticRouter } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom';
+import { matchRoutes } from 'react-router-config';
 import { Provider } from 'react-redux';
 
 import App from '../src/App';
@@ -17,19 +19,25 @@ const app = express();
 app.use(express.static('./build'));
 
 app.get('/*', (req, res) => {
-  const currentRoute = routes.find(route => matchPath(req.url, route)) || {};
+  const currentRoutes = matchRoutes(routes, req.path);
   const store = createStore();
 
-  let promise;
+  const promises = currentRoutes
+    .map(({ route }) => {
+      return route.loadData ? route.loadData(store) : null;
+    })
+    .map(promise => {
+      if (promise) {
+        return new Promise((resolve, reject) => {
+          promise.then(resolve).catch(resolve);
+        });
+      }
+      return null;
+    });
 
-  if (currentRoute.loadData) {
-    promise = currentRoute.loadData(store);
-  } else {
-    promise = Promise.resolve(null);
-  }
-
-  promise.then(() => {
+  Promise.all(promises).then(() => {
     const context = {};
+
     const app = ReactDOMServer.renderToString(
       <Provider store={store}>
         <StaticRouter location={req.url} context={context}>
@@ -69,5 +77,5 @@ app.get('/*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is listening on http://localhost:${PORT}`);
+  console.log(`React Server is running on: http://localhost:${PORT}`);
 });
