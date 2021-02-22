@@ -19,12 +19,7 @@ import manifest from '../build/server/assets-manifest.json';
 const PORT = process.env.PORT || 3006;
 const app = express();
 
-app.use('/static', express.static('./build/static'));
-app.use('/server', express.static('./build/server'));
-
-app.get('*', (req, res) => {
-  console.log('GET', req.url);
-
+function serveApp(req, res) {
   const modules = new Set();
 
   const currentRoutes = matchRoutes(routes, req.path);
@@ -67,25 +62,6 @@ app.get('*', (req, res) => {
     const styles = bundles.css || [];
     const scripts = bundles.js || [];
 
-    // res.send(`
-    //   <!doctype html>
-    //   <html lang="en">
-    //     <head>
-    //       <meta charset="utf-8" />
-    //       <title>CRA SSR</title>
-    //       ${styles.map(style => {
-    //         return `<link href="/assets/${style.file}" rel="stylesheet" />`;
-    //       }).join('\n')}
-    //     </head>
-    //     <body>
-    //       <div id="root">${app}</div>
-    //       ${scripts.map(script => {
-    //         return `<script src="/assets/${script.file}"></script>`
-    //       }).join('\n')}
-    //     </body>
-    //   </html>
-    // `);
-
     const indexFile = path.resolve('./build/index.html');
     fs.readFile(indexFile, 'utf8', (err, indexData) => {
       if (err) {
@@ -104,10 +80,13 @@ app.get('*', (req, res) => {
       return res.send(
         indexData
           .replace(
-            '</head>',`
-            ${styles.map(style => {
+            '</head>',
+            `
+            ${styles
+              .map(style => {
                 return `<link href="/server/${style.file}" rel="stylesheet"/>`;
-              }).join('\n')}
+              })
+              .join('\n')}
             </head>
             `
           )
@@ -125,9 +104,11 @@ app.get('*', (req, res) => {
           .replace(
             '</body>',
             `
-              ${scripts.map(script => {
-                return `<script src="/server/${script.file}"></script>`
-              }).join('\n')}
+              ${scripts
+                .map(script => {
+                  return `<script src="/server/${script.file}"></script>`;
+                })
+                .join('\n')}
               <script>window.main();</script>
               </body>
             `
@@ -135,7 +116,13 @@ app.get('*', (req, res) => {
       );
     });
   });
-});
+}
+
+app.get(['/index.html', '/'], serveApp);
+
+app.use(express.static('./build'));
+
+app.get('/*', serveApp);
 
 Loadable.preloadAll()
   .then(() => {
