@@ -7,8 +7,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev:build-server": "SET NODE_ENV=development && webpack --config webpack.server.js --mode=development -w",
-    "dev:start": "nodemon ./server-build/index.js",
+    "dev:build-server": "SET NODE_ENV=development && webpack --config webpack.server.js --mode=development",
+    "dev:start": "nodemon ./build/server/main.js",
     "dev": "npm-run-all --parallel build dev:*"
   },
   "eslintConfig": {
@@ -29,6 +29,8 @@
     "express": "4.17.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-loadable": "^5.5.0",
+    "react-loadable-ssr-addon": "^1.0.0",
     "react-redux": "^7.2.2",
     "react-router-config": "^5.1.1",
     "react-router-dom": "^5.2.0",
